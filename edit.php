@@ -1,5 +1,6 @@
 <?php
 include "db_conn.php";
+$id = $_GET['id'];
 
 if(isset($_POST['submit'])) {
     $first_name = $_POST['first_name'];
@@ -7,18 +8,18 @@ if(isset($_POST['submit'])) {
     $email = $_POST['email'];
     $age = $_POST['age'];
 
-    $sql = "INSERT INTO $dbname.crud (id, first_name, last_name, email, age) VALUES (NULL, '$first_name', '$last_name', '$email', '$age')";
+    $sql = "UPDATE `crud` SET `first_name`='$first_name',`last_name`='$last_name',`email`='$email',`age`='$age' WHERE `id` = $id";
 
     $result = mysqli_query($conn, $sql);
 
     if($result) {
-        header("Location: index.php?msg=New record created successfully");
+        header("Location: index.php?msg=Data updated successfully");
     } else {
         echo "Failed: " . mysqli_error($conn);
     }
-}
 
-mysqli_close(($conn));
+    mysqli_close($conn);
+}
 ?>
 
 
@@ -43,36 +44,42 @@ mysqli_close(($conn));
 
     <div class="container">
         <div class="text-center mb-4">
-            <h3>Add New User</h3>
-            <p class="text-muted">Complete the form below to add a new user</p>
+            <h3>Edit User Information</h3>
+            <p class="text-muted">Click update after making any changes</p>
         </div>
+
+        <?php 
+            $sql = "SELECT * FROM `crud` WHERE id = $id LIMIT 1";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+        ?>
 
         <div class="container d-flex justify-content-center">
             <form action="" method="post" style="width:50vw; min-width:300px">
                 <div class="row">
                     <div class="col">
                         <label class="form-label">First Name:</label>
-                        <input type="text" class="form-control" name="first_name" placeholder="Albert">
+                        <input type="text" class="form-control" name="first_name" value="<?php echo $row['first_name']?>">
                     </div>
 
                     <div class="col">
                         <label class="form-label">Last Name:</label>
-                        <input type="text" class="form-control" name="last_name" placeholder="Einstein">
+                        <input type="text" class="form-control" name="last_name" value="<?php echo $row['last_name']?>">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">E-mail:</label>
-                    <input type="email" class="form-control" name="email" placeholder="name@example.com">
+                    <input type="email" class="form-control" name="email" value="<?php echo $row['email']?>">
                 </div>            
 
                 <div class="form-group mb-3">
                     <label>Age:</label>
-                    <input type="number" class="form-control" name="age" min="0">
+                    <input type="number" class="form-control" name="age" min="0" value="<?php echo $row['age']?>">
                 </div>
 
                 <div>
-                    <button type="submit" class="btn btn-success" name="submit">Save</button>
+                    <button type="submit" class="btn btn-success" name="submit">Update</button>
                     <a href="index.php" class="btn btn-danger">Cancel</a>
                 </div>
             </form>
