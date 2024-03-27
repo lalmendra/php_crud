@@ -1,3 +1,1 @@
-<?php
-echo('funciona')
-?>
+index page
